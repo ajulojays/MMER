@@ -31,3 +31,11 @@ results/tables/*
 Thumbs.db
 .vscode/
 .idea/
+
+# MMER DADA2 pilot intermediates
+results/dada2_parameter_pilot.log
+results/dada2_parameter_pilot/*/filtered/
+results/dada2_parameter_pilot/**/*.rds
+
+# Cow 270 FASTQ symlinks / raw data
+data/pilot_cow270/raw/
