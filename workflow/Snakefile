@@ -1,0 +1,46 @@
+rule all:
+    input:
+        "results/resistance/control_adjusted_resistance.csv"
+
+rule metadata:
+    input:
+        "data/metadata/PRJEB38332_ena_report.tsv"
+    output:
+        "data/metadata/PRJEB38332_sample_map.csv"
+    shell:
+        "python scripts/00_build_metadata.py"
+
+rule metadata_test:
+    input:
+        "data/metadata/PRJEB38332_sample_map.csv"
+    output:
+        touch("results/qc/metadata_validated.flag")
+    shell:
+        "python tests/test_metadata.py && touch {output}"
+
+rule dada2:
+    input:
+        meta="data/metadata/PRJEB38332_sample_map.csv"
+    output:
+        "results/asv/asv_table.rds"
+    message:
+        "FASTQs must already be present in data/raw (run make download)."
+    shell:
+        "Rscript scripts/02_dada2_asv.R"
+
+rule resistance:
+    input:
+        "results/asv/asv_table.rds",
+        "data/metadata/PRJEB38332_sample_map.csv"
+    output:
+        "results/resistance/quarter_level_resistance_metrics.csv"
+    shell:
+        "Rscript scripts/03_resistance_metrics.R"
+
+rule control_adjusted:
+    input:
+        "results/resistance/quarter_level_resistance_metrics.csv"
+    output:
+        "results/resistance/control_adjusted_resistance.csv"
+    shell:
+        "Rscript scripts/04_within_cow_contrasts.R"

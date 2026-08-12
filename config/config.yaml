@@ -1,0 +1,28 @@
+project: MMER
+bioproject: PRJEB38332
+metadata_raw: data/metadata/PRJEB38332_ena_report.tsv
+metadata_map: data/metadata/PRJEB38332_sample_map.csv
+raw_dir: data/raw
+
+# DADA2 parameters MUST be confirmed from FastQC/profile plots before production.
+dada2:
+  trunc_len_f: 240
+  trunc_len_r: 200
+  max_ee_f: 2
+  max_ee_r: 2
+  trunc_q: 2
+  min_overlap: 20
+  remove_phix: true
+  multithread: true
+
+# Taxonomy reference is intentionally external / not versioned here.
+taxonomy:
+  silva_train_set: references/silva_nr99_v138.2_train_set.fa.gz
+  silva_species: references/silva_species_assignment_v138.2.fa.gz
+
+resistance:
+  baseline: T1
+  post_timepoints: [T2, T3]
+  primary_distance: bray_curtis
+  secondary_distance: aitchison
+  zero_replacement: multiplicative

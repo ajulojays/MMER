@@ -1,0 +1,25 @@
+name: mmer
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python>=3.11
+  - pandas>=2.2
+  - numpy>=1.26
+  - scipy>=1.12
+  - pyyaml>=6
+  - snakemake-minimal>=8
+  - wget
+  - pigz
+  - fastqc
+  - multiqc
+  - r-base>=4.3
+  - bioconductor-dada2
+  - bioconductor-phyloseq
+  - r-vegan
+  - r-ape
+  - r-tidyverse
+  - r-optparse
+  - r-compositions
+  - r-zcompositions
