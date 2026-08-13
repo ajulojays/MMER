@@ -2,7 +2,7 @@
 
 **Mammary Metataxonomy Ecological Resistance**
 
-MMER is a reproducible reanalysis framework for quantifying **ecological resistance of the bovine mammary microbiome** to dry-cow interventions using public longitudinal 16S rRNA amplicon data.
+MMER is a reproducible reanalysis framework for quantifying **ecological resistance and perturbability of the bovine mammary microbiome** to dry-cow interventions using public longitudinal 16S rRNA amplicon data.
 
 ## Discovery cohort
 
@@ -75,6 +75,51 @@ The full 60-sample production workflow has now completed end-to-end.
 
 See [`docs/production_analysis_status_2026-08-12.md`](docs/production_analysis_status_2026-08-12.md) for the current full results summary and sensitivity-analysis details.
 
+## Study 1 perturbability model
+
+Q3 is now formalized as a portable **ecological perturbability model** in `scripts/07a_build_perturbability_model.R`.
+
+### Prediction target
+
+The target is one value per independent cow-quarter trajectory:
+
+`mean Bray perturbability = mean[d(T1,T2), d(T1,T3)]`
+
+This yields **20 trajectory-level training outcomes from 5 cows**.
+
+### Prespecified baseline predictors
+
+- richness
+- Shannon diversity
+- evenness
+- dominance
+
+The v1 transport model intentionally excludes individual taxa and ASV-space PC axes because the planned Manitoba validation cohort uses a different 16S region.
+
+### Model design
+
+- ridge regression to stabilize correlated ecological predictors
+- nested **leave-one-cow-out** cross-validation for internal discovery performance
+- entire cows, not individual quarters, are held out during validation
+- 5,000-replicate **cow-level bootstrap** by default for coefficient uncertainty
+- final frozen model exported for outcome-blinded external application
+
+The companion script `scripts/07b_apply_perturbability_model.R` applies the frozen model to an external baseline table **without using external follow-up outcomes**.
+
+See [`docs/perturbability_model_v1.md`](docs/perturbability_model_v1.md) for the model card and validation protocol.
+
+### Planned external validation
+
+The first planned external test is the Manitoba paired pre-dry-off/post-calving mammary cohort. Predictions will be generated and frozen from baseline samples before observed follow-up displacement is calculated or inspected.
+
+The primary validation question is:
+
+> **Does the perturbability rank predicted from baseline mammary ecology correlate with the magnitude of observed future ecological displacement in an independent cohort?**
+
+Because the cohorts differ in sequencing region and laboratory protocol, **rank transportability** is the primary external endpoint; exact calibration is secondary.
+
+The model currently predicts **ecological perturbability only**. It is not a mastitis-risk model. A later, separately tested hypothesis is whether externally validated perturbability scores measured at apparently healthy preclinical timepoints predict future mastitis susceptibility.
+
 ## Repository layout
 
 ```text
@@ -83,15 +128,16 @@ MMER/
 ├── data/
 │   ├── metadata/           # ENA metadata + reconstructed sample map
 │   └── raw/                # FASTQ files (gitignored)
-├── docs/                   # design, metadata, and analysis notes
+├── docs/                   # design, metadata, model cards, analysis notes
 ├── manuscript/             # manuscript working files
 ├── results/
 │   ├── qc/
 │   ├── asv/
 │   ├── resistance/
+│   ├── production/
 │   ├── figures/
 │   └── tables/
-├── scripts/                # numbered reproducible analysis steps
+├── scripts/                # numbered reproducible analysis/modeling steps
 ├── tests/                  # metadata integrity checks
 ├── workflow/               # Snakemake entry point
 ├── environment.yml
@@ -106,6 +152,20 @@ conda activate mmer
 python scripts/00_build_metadata.py
 python tests/test_metadata.py
 bash scripts/01_download_fastq.sh
+```
+
+After the production Q1–Q3 outputs exist, build the Study 1 perturbability model with:
+
+```bash
+MMER_BOOTSTRAPS=5000 Rscript scripts/07a_build_perturbability_model.R
+```
+
+Apply the frozen model to an external baseline table with:
+
+```bash
+Rscript scripts/07b_apply_perturbability_model.R \
+  external_baseline.csv \
+  results/external/manitoba
 ```
 
 ## Data provenance
@@ -126,6 +186,9 @@ bash scripts/01_download_fastq.sh
 - Treat treatment and anatomical quarter as confounded in the source design because each treatment is fixed to the same quarter position across cows.
 - Treat the multidimensional resistance score as exploratory and the individual Q2 dimensions as descriptive unless supported by inferential sensitivity analyses.
 - Treat baseline-predictor analyses as discovery/hypothesis-generating because the discovery cohort contains only five cows.
+- Never evaluate model performance with quarter-level random train/test splitting; hold out cows as blocks.
+- Freeze external predictions before inspecting follow-up displacement or disease outcomes.
+- Do not reinterpret ecological perturbability as disease risk without a separate external disease-outcome test.
 
 ## Status
 
@@ -137,4 +200,6 @@ bash scripts/01_download_fastq.sh
 
 **Q3:** repeated-measures, 20-quarter, T3-only, depth-diagnostic, PCA-loading, direct-genus, and FDR sensitivity analyses complete.
 
-**Next:** finalize manuscript figures/tables and write the Results/Discussion around ecological resistance as a baseline-dependent community phenotype.
+**Perturbability model v1:** architecture and external-application workflow implemented; local execution on production outputs is the next step to freeze coefficients and internal validation metrics.
+
+**Next:** run/freeze the perturbability model on the production workstation, then apply it outcome-blind to the Manitoba baseline cohort for external validation.
