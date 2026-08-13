@@ -29,24 +29,51 @@ Cow order repeats within each block: **270 → 355 → 366 → 321 → 365**, fo
 
 The original aliases `270AS_S1`, `270AD_S2`, `270PD_S3`, and `270PS_S4` provide the anatomical key used to reconstruct the repeated four-position quarter order. The inferred mapping is generated and validated by `scripts/00_build_metadata.py` rather than being manually maintained.
 
-## Core scientific aims
+## Core scientific questions
 
-1. **Quantify quarter-level mammary ecological resistance nested within cow.**
-   Measure the magnitude of within-quarter ecological displacement from the pre-intervention baseline.
-2. **Identify ecological characteristics associated with resistance.**
-   Test whether baseline diversity, evenness, dominance, composition, and individual taxa are associated with subsequent displacement, while using the untreated quarter within each cow as the physiological-transition reference.
-3. **Resolve the dimensions of mammary ecological resistance.**
-   Determine whether compositional resistance, diversity resistance, taxon retention, dominance stability, and related ecological properties represent a common or multidimensional response.
+1. **Q1 — How far does each mammary community move from its own baseline?**
+   Quantify quarter-level ecological displacement from T1 using Bray–Curtis and Aitchison distances, with the untreated quarter as a within-cow temporal reference.
+2. **Q2 — What ecological dimensions constitute resistance/perturbation?**
+   Decompose the response into community membership retention/turnover, diversity restructuring, richness, evenness, dominance, and related dimensions.
+3. **Q3 — Does baseline ecological state predict later perturbability?**
+   Test whether baseline richness, Shannon diversity, evenness, dominance, and multivariate community composition predict subsequent displacement.
 
 ## Key distinction from the original analysis
 
-The original study primarily asked whether treatment groups differed in microbiome composition/diversity. MMER asks a different question: **how far did each individual quarter move from its own baseline, how heterogeneous was that response, and which baseline ecological features were associated with greater resistance?**
+The original study primarily asked whether treatment groups differed in microbiome composition/diversity. MMER asks a different question: **how far did each individual quarter move from its own baseline, what ecological dimensions underlie that response, and which baseline ecological features predict greater resistance or perturbability?**
 
 For quarter `q` of cow `i` at post-baseline time `t`:
 
 `D(i,q,t) = d(M(i,q,t), M(i,q,T1))`
 
 Lower displacement indicates greater ecological resistance. MMER retains the raw distance metrics as primary outcomes rather than forcing all distances into a single arbitrary resistance score.
+
+## Production status
+
+The full 60-sample production workflow has now completed end-to-end.
+
+### DADA2
+
+- 8,816,802 input read pairs
+- 6,492,116 filtered reads (73.6%)
+- 5,633,741 merged reads (86.8% of filtered)
+- 5,384,222 non-chimeric reads
+- 9,859 non-chimeric ASVs
+- median ASV length: 403 bp
+
+### Taxonomy
+
+- 7,736 bacterial ASVs
+- 5,074,031 bacterial reads (94.2% of retained reads)
+- ~81% of retained reads assigned to genus
+
+### Current ecological findings
+
+- **Q1:** Aitchison displacement shows the strongest treatment/quarter-condition signal. Cloxacillin-assigned quarters showed ~+20 Aitchison units of excess displacement relative to untreated controls; the 20-quarter aggregated contrast remained significant after BH correction (`q = 0.019`). Bray–Curtis displacement showed the same general direction but did not show a significant treatment effect.
+- **Q2:** Cloxacillin-associated trajectories show a coherent multidimensional perturbation profile (reduced core retention, increased turnover, larger richness/dominance restructuring), but no individual component survives full-family BH-FDR correction. Q2 is therefore interpreted as ecological decomposition rather than independent treatment-effect evidence for each component.
+- **Q3:** Baseline richness, Shannon diversity, evenness, dominance, CLR-PC1, and CLR-PC2 robustly predict later Bray–Curtis displacement. These relationships survive repeated-measures correction, 20-quarter aggregation, T3-only sensitivity analysis, and BH-FDR correction. No single genus explains the effect robustly across all sensitivity analyses, supporting an emergent whole-community interpretation.
+
+See [`docs/production_analysis_status_2026-08-12.md`](docs/production_analysis_status_2026-08-12.md) for the current full results summary and sensitivity-analysis details.
 
 ## Repository layout
 
@@ -81,13 +108,6 @@ python tests/test_metadata.py
 bash scripts/01_download_fastq.sh
 ```
 
-Then run the ASV workflow after setting the DADA2 trimming parameters in `config/config.yaml`:
-
-```bash
-Rscript scripts/02_dada2_asv.R
-Rscript scripts/03_resistance_metrics.R
-```
-
 ## Data provenance
 
 - Study: Biscarini F. et al. (2020), *A Randomized Controlled Trial of Teat-Sealant and Antibiotic Dry-Cow Treatments for Mastitis Prevention Shows Similar Effect on the Healthy Milk Microbiome.* Frontiers in Veterinary Science 7:581.
@@ -103,10 +123,18 @@ Rscript scripts/03_resistance_metrics.R
 - Use the untreated quarter as the within-cow reference for background dry-off/calving-associated ecological change.
 - Separate **ecological resistance** from antimicrobial resistance terminology.
 - Report low-biomass limitations explicitly; the source study did not include sequenced extraction-negative controls.
-- Treat baseline-predictor analyses as exploratory because the discovery cohort contains only five cows.
+- Treat treatment and anatomical quarter as confounded in the source design because each treatment is fixed to the same quarter position across cows.
+- Treat the multidimensional resistance score as exploratory and the individual Q2 dimensions as descriptive unless supported by inferential sensitivity analyses.
+- Treat baseline-predictor analyses as discovery/hypothesis-generating because the discovery cohort contains only five cows.
 
 ## Status
 
-**Phase 0:** metadata reconstruction and repository setup — complete.
+**Production pipeline:** complete for all 60 samples.
 
-**Next:** download reads, run QC/DADA2, reproduce selected original-study summaries, then calculate baseline-relative ecological resistance.
+**Q1:** inferential hardening complete.
+
+**Q2:** multidimensional decomposition and sensitivity analysis complete.
+
+**Q3:** repeated-measures, 20-quarter, T3-only, depth-diagnostic, PCA-loading, direct-genus, and FDR sensitivity analyses complete.
+
+**Next:** finalize manuscript figures/tables and write the Results/Discussion around ecological resistance as a baseline-dependent community phenotype.
