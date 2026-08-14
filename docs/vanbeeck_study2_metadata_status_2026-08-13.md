@@ -1,5 +1,7 @@
 # Van Beeck Study 2 metadata status — 2026-08-13
 
+> **Historical metadata checkpoint.** Sequence processing and Q1–Q3 analyses have since been completed for the primary Study 2 milk cohort. See [`vanbeeck_study2_analysis_status_2026-08-14.md`](vanbeeck_study2_analysis_status_2026-08-14.md) for the current scientific status and [`MMER_hypothesis_and_replication_framework.md`](MMER_hypothesis_and_replication_framework.md) for the frozen discovery/replication framework.
+
 ## Dataset
 
 Study 2 uses the public longitudinal bovine milk/teat-skin microbiome dataset deposited under ENA BioProject `PRJEB63336`.
@@ -10,7 +12,7 @@ The purpose of this cohort within MMER is cross-study replication of the Study 1
 
 Metadata were reconstructed from ENA run reports and EMBL-EBI BioSamples JSON records.
 
-Current inventory:
+Current inventory at this checkpoint:
 
 - 530 sequencing runs
 - 514 unique BioSamples
@@ -55,7 +57,7 @@ Among complete trajectories:
 - milk: **67**
 - teat skin: **47**
 
-The primary Study 2 MMER replication cohort is the **67 complete milk trajectories**.
+The primary Study 2 MMER replication cohort begins from the **67 complete milk trajectories**.
 
 ## Dairy distribution
 
@@ -98,9 +100,9 @@ The BioSamples records expose additional longitudinal/contextual metadata includ
 - MUN
 - collection date
 
-These fields will be retained in the production manifest and used for descriptive or adjusted analyses where scientifically appropriate.
+These fields are retained in the production manifest and can be used for descriptive or adjusted analyses where scientifically appropriate.
 
-## Planned MMER Study 2 questions
+## Original planned MMER questions at this checkpoint
 
 ### Q1 — displacement and perturbation context
 
@@ -110,33 +112,14 @@ For each complete milk trajectory:
 - `D13 = d(Baseline, 55-75DIM)`
 - `D23 = d(7 Days, 55-75DIM)` as an interval-specific secondary analysis
 
-Primary Q1 tests will evaluate whether displacement differs by treatment/control stratum and dairy.
-
 ### Q3 — baseline ecological susceptibility
 
-The main replication question is whether baseline ecological state predicts later displacement in this larger cohort.
+The main replication question was whether baseline ecological state predicts later displacement in this larger cohort.
 
 Primary formulation:
 
 `future displacement ~ baseline ecological state + treatment + dairy`
 
-Prediction will use cow/core-blocked validation. Because Study 2 includes three dairies, an additional transportability analysis is planned:
+Prediction was planned using cow/core-blocked validation and train-on-two-dairies/test-on-the-third transportability analysis.
 
-`train on two dairies -> test on the third`
-
-This directly tests the working hypothesis that baseline microbiome background varies by location and can influence ecological trajectory or perturbability.
-
-## Cross-study objective
-
-Study 1 suggested that treatment helps define perturbation context while baseline ecology helps define susceptibility. Study 2 will test whether that relationship survives:
-
-- a larger number of longitudinal trajectories;
-- multiple dairies;
-- different treatment/control strata;
-- a different cohort and sequencing experiment.
-
-The emphasis is replication and transportability rather than further optimization of the Study 1 model.
-
-## Immediate next step
-
-Construct the milk-only FASTQ run manifest for the 67 complete milk trajectories, corresponding to 201 biological timepoint samples plus any attached technical replicate runs, then begin production sequence processing.
+These analyses have now been executed; see the 2026-08-14 Study 2 analysis-status document for results.
