@@ -92,7 +92,7 @@ The Study 1 interpretation is therefore:
 
 The Q3 signal is not simply a proxy for treatment assignment in this cohort. However, Study 1 contains only five cows, so this is discovery evidence rather than proof of universal transportability.
 
-See [`docs/production_analysis_status_2026-08-12.md`](docs/production_analysis_status_2026-08-12.md) for the detailed analysis record.
+See [`docs/production_analysis_status_2026-08-12.md`](docs/production_analysis_status_2026-08-12.md) for the detailed Study 1 analysis record.
 
 ## Study 1 perturbability model
 
@@ -108,15 +108,83 @@ Model design:
 
 The companion script `scripts/07b_apply_perturbability_model.R` applies the frozen model to an external baseline table without using external follow-up outcomes.
 
+## Study 2 — Van Beeck et al. / PRJEB63336
+
+Cross-study replication is now underway using the public Van Beeck et al. longitudinal bovine milk/teat-skin dataset, BioProject **PRJEB63336**.
+
+### Metadata reconstruction status
+
+ENA/BioSamples metadata reconstruction is complete enough to define the longitudinal structure. The deposited sample naming scheme uses a stable core identifier with suffixes that map exactly to the three repeated timepoints:
+
+- `.1` = **Baseline**
+- `.2` = **7 Days**
+- `.3` = **55–75 DIM**
+
+This mapping was validated directly against deposited BioSamples metadata for all run-level records recovered in the manifest (`suffix_timepoint_match = TRUE` for 530 run records).
+
+The project currently contains:
+
+- **530 sequencing runs**
+- **514 unique BioSamples**
+- **208 unique longitudinal core IDs**
+- **114 complete 3-timepoint trajectories**
+
+Among those complete trajectories:
+
+- **67 milk trajectories**
+- **47 teat-skin trajectories**
+
+The 67 complete milk trajectories are distributed across three dairies:
+
+- Dairy 1: **14**
+- Dairy 2: **21**
+- Dairy 3: **32**
+
+Treatment/control strata among complete milk trajectories:
+
+- `CB`: **22**
+- `CH`: **15**
+- `control high SCC`: **14**
+- `control low SCC`: **16**
+
+### Dairy × treatment structure for complete milk trajectories
+
+| Dairy | CB | CH | control high SCC | control low SCC | Total |
+|---|---:|---:|---:|---:|---:|
+| Dairy 1 | 5 | 3 | 2 | 4 | 14 |
+| Dairy 2 | 8 | 4 | 5 | 4 | 21 |
+| Dairy 3 | 9 | 8 | 7 | 8 | 32 |
+| **Total** | **22** | **15** | **14** | **16** | **67** |
+
+This yields a substantially larger replication cohort than Study 1 and enables explicit testing of dairy/background effects.
+
+### Planned Study 2 analysis
+
+For each complete milk trajectory:
+
+- `D12 = d(Baseline, 7 Days)`
+- `D13 = d(Baseline, 55–75 DIM)`
+- optionally `D23 = d(7 Days, 55–75 DIM)` for interval-specific trajectory analysis
+
+The replication framework will test:
+
+1. **Q1:** how much each milk microbiome moves from baseline, and whether displacement differs by treatment/control stratum and dairy;
+2. **Q3:** whether baseline ecological state predicts later perturbability after accounting for treatment and dairy;
+3. **geographic/background transportability:** whether the baseline-perturbability relationship generalizes across dairies, including train-on-two-dairies/test-on-the-third validation where feasible.
+
+The immediate next step is to build the milk-only FASTQ run manifest for the 67 complete trajectories and process the corresponding 201 biological samples (plus any technical replicate runs attached to those BioSamples).
+
+See [`docs/vanbeeck_study2_metadata_status_2026-08-13.md`](docs/vanbeeck_study2_metadata_status_2026-08-13.md) for the detailed metadata reconstruction record.
+
 ## Cross-study replication phase
 
-**Study 1 is now discovery-complete for the core Q1–Q3 hypothesis.** The next phase is replication across public longitudinal bovine milk microbiome datasets.
+**Study 1 is now discovery-complete for the core Q1–Q3 hypothesis.** The current priority is replication across public longitudinal bovine milk microbiome datasets.
 
-The cross-study framework will preserve the same conceptual questions while respecting each study's design:
+The cross-study framework preserves the same conceptual question while respecting each study's design:
 
 `current/baseline ecological state + perturbation context + longitudinal history -> subsequent ecological displacement`
 
-Priority datasets identified for replication include public bovine milk studies spanning dry-cow antimicrobial exposure, longitudinal lactation, farm/geographic variation, and shotgun/amplicon sequencing. The aim is to determine which Study 1 signals replicate across cows, farms, geography, sequencing protocols, and perturbation types rather than further optimizing the five-cow discovery cohort.
+The aim is to determine which Study 1 signals replicate across cows, farms, geography, sequencing protocols, and perturbation types rather than further optimizing the five-cow discovery cohort.
 
 ## Repository layout
 
@@ -146,19 +214,27 @@ bash scripts/01_download_fastq.sh
 
 ## Data provenance
 
-- Study: Biscarini F. et al. (2020), *A Randomized Controlled Trial of Teat-Sealant and Antibiotic Dry-Cow Treatments for Mastitis Prevention Shows Similar Effect on the Healthy Milk Microbiome.* Frontiers in Veterinary Science 7:581.
+### Study 1
+
+- Biscarini F. et al. (2020), *A Randomized Controlled Trial of Teat-Sealant and Antibiotic Dry-Cow Treatments for Mastitis Prevention Shows Similar Effect on the Healthy Milk Microbiome.* Frontiers in Veterinary Science 7:581.
 - DOI: `10.3389/fvets.2020.00581`
 - ENA BioProject: `PRJEB38332`
+
+### Study 2
+
+- Van Beeck et al. longitudinal bovine milk/teat-skin microbiome cohort
+- ENA BioProject: `PRJEB63336`
 
 ## Reproducibility principles
 
 - Preserve ENA accessions and original aliases.
-- Treat quarter nested within cow as the biological unit for longitudinal displacement.
+- Treat repeated samples from the same cow/core ID as longitudinally linked observations.
 - Separate ecological resistance from antimicrobial resistance terminology.
 - Treat treatment and anatomical quarter as confounded in Study 1.
-- Treat baseline-predictor analyses as discovery/hypothesis-generating because Study 1 contains only five cows.
+- Treat baseline-predictor analyses from Study 1 as discovery/hypothesis-generating because Study 1 contains only five cows.
 - Never evaluate model performance with quarter-level random train/test splitting; hold out cows as blocks.
 - Learn treatment effects inside training folds when treatment is used predictively.
+- For Study 2, explicitly evaluate dairy/background transportability rather than pooling dairies without sensitivity analysis.
 - Freeze external predictions before inspecting follow-up outcomes when performing prospective-style validation.
 - Do not reinterpret ecological perturbability as disease risk without a separate disease-outcome test.
 
@@ -166,12 +242,14 @@ bash scripts/01_download_fastq.sh
 
 **Study 1 production pipeline:** complete.
 
-**Q1:** complete.
+**Study 1 Q1:** complete.
 
-**Q2:** complete.
+**Study 1 Q2:** complete.
 
-**Q3:** complete, including nested LOCO and treatment-adjusted sensitivity analysis.
+**Study 1 Q3:** complete, including nested LOCO and treatment-adjusted sensitivity analysis.
 
 **Study 1 decision:** discovery-complete; avoid further model escalation on five cows.
 
-**Next:** cross-study replication on public bovine milk microbiome cohorts.
+**Study 2 metadata reconstruction:** complete enough to define 67 complete milk trajectories across three dairies and four treatment/control strata.
+
+**Next:** build/download the Study 2 milk-only FASTQ manifest and begin production processing for cross-study replication.
