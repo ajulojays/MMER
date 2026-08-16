@@ -35,12 +35,12 @@ META <- file.path(
   "PRJEB38332_sample_map.csv"
 )
 
-RAW_DIR <- file.path(ROOT, "data", "raw")
+RAW_DIR <- file.path(ROOT, "data", "primer_trimmed")
 
 OUT_ROOT <- file.path(
   ROOT,
   "results",
-  "dada2_parameter_pilot"
+  "dada2_parameter_pilot_primer_trimmed"
 )
 
 dir.create(OUT_ROOT, recursive = TRUE, showWarnings = FALSE)
@@ -201,11 +201,11 @@ print(
 
 PARAMETERS <- tribble(
   ~strategy, ~truncF, ~truncR, ~maxEEF, ~maxEER,
-  "A_250_240_EE2_3", 250, 240, 2, 3,
-  "B_245_235_EE2_3", 245, 235, 2, 3,
-  "C_noTrunc_EE2_3",   0,   0, 2, 3,
-  "D_noTrunc_EE2_5",   0,   0, 2, 5,
-  "E_250_235_EE2_5", 250, 235, 2, 5
+  "A_225_205_EE2_3", 225, 205, 2, 3,
+  "B_225_200_EE2_3", 225, 200, 2, 3,
+  "C_230_200_EE2_3", 230, 200, 2, 3,
+  "D_noTrunc_EE2_3",   0,   0, 2, 3,
+  "E_225_200_EE2_5", 225, 200, 2, 5
 )
 
 write_csv(
