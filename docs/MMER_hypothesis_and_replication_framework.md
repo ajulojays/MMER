@@ -489,3 +489,97 @@ Primary scripts:
 - scripts/23_PC2_ecological_state_interpretation.R
 - scripts/24_publication_figure_primary_healthy.R
 
+
+---
+
+# Frozen primary healthy-quarter analysis — 2026-08-16
+
+The current primary MMER analysis is restricted to two phenotype-comparable cohorts:
+
+- Italy: 20 mammary-quarter trajectories from 5 cows
+- Manitoba: 29 mammary-quarter trajectories from 9 cows
+- Total: 49 quarter trajectories from 14 cows
+
+Wisconsin is excluded from primary inference because individual quarter-level health status could not be reconstructed with sufficient confidence.
+
+## Primary outcome
+
+Ecological resistance is defined as:
+
+R = 1 - Bray-Curtis(T1, T2)
+
+Higher values indicate greater compositional resistance across the dry-off to early-postpartum transition.
+
+## Aim 1
+
+Question:
+
+Does baseline multivariate ecological architecture relate to subsequent ecological resistance?
+
+Model:
+
+R ~ PC1 + PC2 + Study
+
+Cow-clustered CR2 inference was used.
+
+Frozen result:
+
+- joint PC1 + PC2 test: F(2, 7.81) = 10.0
+- P = 0.00699
+- PC1 beta = -0.0286, P = 0.124
+- PC2 beta = +0.0622, P = 0.00302
+- adjusted R2 = 0.289
+
+Interpretation:
+
+Baseline mammary community architecture is associated with subsequent ecological resistance, with the pooled association driven predominantly by PC2.
+
+## Aim 2
+
+Question:
+
+Does the architecture-resistance relationship differ between Italy and Manitoba?
+
+Model:
+
+R ~ (PC1 + PC2) * Study
+
+Frozen result:
+
+- interaction test: F(2, 5.55) = 4.23
+- P = 0.0766
+
+Interpretation:
+
+There is insufficient conventional evidence of cohort heterogeneity, although effect magnitude may be context dependent.
+
+## PC2 ecological gradient
+
+Mean resistance across PC2 tertiles:
+
+Italy:
+- Low: 0.422
+- Intermediate: 0.600
+- High: 0.656
+
+Manitoba:
+- Low: 0.402
+- Intermediate: 0.449
+- High: 0.492
+
+Positive PC2-loading families include Lactobacillaceae, Pseudomonadaceae, Propionibacteriaceae, Streptococcaceae and Beijerinckiaceae.
+
+Negative PC2-loading families include Paracoccaceae, Bacteroidaceae, Anaerovoracaceae, Ruminococcaceae, Saccharimonadaceae and Caulobacteraceae.
+
+These families define a multivariate ecological state and are not interpreted as individually causal or protective.
+
+## Frozen primary conclusion
+
+Baseline mammary community organization is associated with ecological resistance across the dry-off to early-postpartum transition in healthy mammary quarters.
+
+Primary scripts:
+
+- scripts/22_primary_healthy_twoAims.R
+- scripts/23_PC2_ecological_state_interpretation.R
+- scripts/24_publication_figure_primary_healthy.R
+
