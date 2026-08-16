@@ -1,0 +1,3 @@
+aim,biological_question,hypothesis,Fstat,df_num,df_denom,p_value,interpretation
+Aim 1,Does baseline ecological architecture predict subsequent ecological resistance?,Baseline ecological architecture predicts quarter ecological resistance,10.01183294206002,2,7.8119487936560805,0.006990713608405079,Supported
+Aim 2,Does the architecture-resistance relationship differ between Italy and Manitoba?,Baseline architecture-resistance relationship differs between Italy and Manitoba,4.231067432081645,2,5.548510841269435,0.07655398095325394,Insufficient evidence of cohort heterogeneity
