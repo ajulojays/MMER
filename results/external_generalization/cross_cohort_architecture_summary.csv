@@ -1,0 +1,9 @@
+cohort,platform,baseline,followup,n,pc1_beta,pc2_beta,r2,joint_test,joint_p,interpretation
+Italy+Manitoba,16S,T1,T2,49,-0.0286,0.0622,0.334,CR2_HTZ_F,0.00699,primary_support
+Porcellato,16S,Sampling1,Sampling2,154,-0.0892,0.0636,0.410,CR2_HTZ_F,<0.001,external_support
+Porcellato_assigned_family_ge1000,16S,Sampling1,Sampling2,143,-0.1000,0.0613,,CR2_HTZ_F,<0.001,robustness_support
+Porcellato_assigned_family_ge2000,16S,Sampling1,Sampling2,121,-0.0969,0.0574,,CR2_HTZ_F,0.00278,robustness_support
+Patangia,shotgun,M0,M2,24,0.0334,-0.0252,0.0275,HC3_joint_Wald,0.784,no_support
+Patangia,shotgun,M2,M4,24,0.0555,0.0102,0.0506,HC3_joint_Wald,0.636,no_support
+Patangia,shotgun,M4,M6,24,-0.0696,-0.0111,0.0819,HC3_joint_Wald,0.392,no_support
+Patangia_exploratory,shotgun,M2,M6,24,0.0430,0.0723,0.1448,standard_joint_F,0.194,suggestive_not_confirmatory
