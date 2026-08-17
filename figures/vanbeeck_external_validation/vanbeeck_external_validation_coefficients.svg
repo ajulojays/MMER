@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="504pt" height="230.4pt" viewBox="0 0 504 230.4" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs><style type="text/css">*{stroke-linejoin:round;stroke-linecap:butt}</style></defs>
+ <rect width="504" height="230.4" fill="white"/>
+ <line x1="447.56" y1="26.88" x2="447.56" y2="188.44" stroke="black" stroke-width="1"/>
+ <line x1="283.11" y1="70.94" x2="472.47" y2="70.94" stroke="black" stroke-width="2"/>
+ <line x1="57.97" y1="144.38" x2="366.27" y2="144.38" stroke="black" stroke-width="2"/>
+ <circle cx="383.13" cy="70.94" r="4" fill="black"/>
+ <circle cx="198.45" cy="144.38" r="4" fill="black"/>
+ <text x="26" y="75" font-family="sans-serif" font-size="12">PC1</text>
+ <text x="26" y="148" font-family="sans-serif" font-size="12">PC2</text>
+ <text x="252" y="20" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold">Van Beeck external validation: baseline architecture coefficients</text>
+ <text x="252" y="218" text-anchor="middle" font-family="sans-serif" font-size="11">Coefficient for ecological resistance</text>
+ <text x="492" y="184" text-anchor="end" font-family="sans-serif" font-size="9">Points: estimates; bars: 95% stratified bootstrap intervals</text>
+ <text x="72.95" y="204" text-anchor="middle" font-family="sans-serif" font-size="9">-0.10</text>
+ <text x="147.87" y="204" text-anchor="middle" font-family="sans-serif" font-size="9">-0.08</text>
+ <text x="222.80" y="204" text-anchor="middle" font-family="sans-serif" font-size="9">-0.06</text>
+ <text x="297.72" y="204" text-anchor="middle" font-family="sans-serif" font-size="9">-0.04</text>
+ <text x="372.64" y="204" text-anchor="middle" font-family="sans-serif" font-size="9">-0.02</text>
+ <text x="447.56" y="204" text-anchor="middle" font-family="sans-serif" font-size="9">0.00</text>
+</svg>
