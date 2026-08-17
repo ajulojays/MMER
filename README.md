@@ -2,366 +2,218 @@
 
 **Mammary Metataxonomy Ecological Resistance**
 
-MMER is a reproducible reanalysis framework for quantifying **ecological resistance and perturbability of the bovine mammary microbiome** to dry-cow interventions using public longitudinal microbiome data.
+MMER is a reproducible multi-cohort reanalysis framework for testing whether the **baseline ecological organization of the bovine mammary microbiome is associated with its subsequent ecological resistance**.
 
-## Core scientific questions
+Ecological resistance is defined as:
 
-1. **Q1 — How far does each mammary community move from its own baseline?**
-2. **Q2 — What ecological dimensions constitute resistance/perturbation?**
-3. **Q3 — Does baseline ecological state predict later perturbability, and does that relationship generalize across biological contexts?**
+`ecological_resistance = 1 - Bray-Curtis(baseline, follow-up)`
 
-For a longitudinal unit `i` at post-baseline time `t`:
+Higher values indicate greater compositional retention relative to the unit's own baseline.
 
-`D(i,t) = d(M(i,t), M(i,T1))`
+## Current scientific question
 
-Lower displacement indicates greater ecological resistance.
+The current MMER hypothesis is:
 
-The project is now explicitly structured as a multi-cohort hypothesis-testing program:
+> **Does baseline multivariate mammary-community architecture contain information about how strongly that community resists subsequent ecological displacement, and does that phenomenon generalize across independent cohorts?**
 
-`Study 1 discovery -> Study 2 independent replication/generalization -> refined cross-study hypothesis`
+The project now distinguishes clearly between **discovery/development cohorts** and **external generalization cohorts**.
 
-See [`docs/MMER_hypothesis_and_replication_framework.md`](docs/MMER_hypothesis_and_replication_framework.md) for the frozen scientific framework.
+## Current four-study evidence structure
 
----
+| Role | Cohort | Platform | Primary unit / analysis | Current result |
+|---|---|---|---|---|
+| Discovery | Italy / Biscarini et al. / PRJEB38332 | 16S | healthy quarter trajectories | contributes to significant pooled baseline-architecture signal |
+| Discovery | Manitoba / Derakhshani et al. | 16S | healthy quarter trajectories | contributes to significant pooled baseline-architecture signal |
+| External generalization | Porcellato | 16S | 154 same-quarter Sampling1→Sampling2 trajectories | **strong positive external validation** |
+| External generalization | Patangia | shotgun metagenomics / Kraken2 family profiles | 24 cows with M0, M2, M4, M6 | **primary taxonomic test negative; later-window signal exploratory only** |
 
-## Study 1 — Biscarini et al. 2020 / PRJEB38332
-
-Five healthy Holstein-Friesian cows contributed four mammary quarters each and three longitudinal sampling points, giving 60 total samples and 20 quarter trajectories.
-
-### Experimental structure
-
-| Quarter | Anatomical code | Intervention |
-|---|---|---|
-| Front left | FL / AS | Untreated control |
-| Front right | FR / AD | Teat sealant |
-| Rear right | RR / PD | Cephalonium |
-| Rear left | RL / PS | Cloxacillin |
-
-Timepoints:
-
-- **T1:** dry-off / pre-intervention baseline
-- **T2:** calving
-- **T3:** 5 days in milk
-
-Treatment is fixed to anatomical quarter, so treatment and quarter anatomy cannot be separated statistically. Results are therefore interpreted as treatment/quarter-condition associations rather than pure causal drug effects.
-
-### Study 1 Q1
-
-Aitchison displacement showed the clearest treatment/quarter-condition signal. Cloxacillin-assigned quarters showed approximately **+20 Aitchison units** of excess displacement relative to untreated controls; the 20-quarter aggregated contrast remained significant after BH correction (`q = 0.019`). Bray–Curtis showed the same broad direction but no significant overall treatment effect.
-
-### Study 1 Q2
-
-Cloxacillin-associated trajectories showed a coherent multidimensional perturbation profile involving reduced core retention, increased turnover, and larger richness/dominance restructuring. Individual Q2 components did not survive full-family BH-FDR correction and are treated as ecological decomposition rather than independent confirmatory endpoints.
-
-### Study 1 Q3 — discovery signal
-
-The portable baseline predictor set is:
-
-- richness
-- Shannon diversity
-- evenness
-- dominance
-
-Study 1 directional signature:
-
-`+ richness, + Shannon, + evenness, - dominance`
-
-The trajectory-level target is:
-
-`mean Bray perturbability = mean[d(T1,T2), d(T1,T3)]`
-
-Nested leave-one-cow-out validation of baseline ecology alone achieved:
-
-- RMSE: **0.10655**
-- MAE: **0.08796**
-- Pearson `r`: **0.5574**
-- Spearman `rho`: **0.5895**
-- CV `R²`: **0.2941**
-
-Treatment-only prediction was substantially worse (`CV R² = -0.239`), and adding treatment to baseline ecology worsened RMSE by 8.6%.
-
-Study 1 interpretation:
-
-> **Treatment helps define the perturbation context; baseline ecology helps define susceptibility to perturbation.**
-
-Because Study 1 contains only five cows, this is discovery evidence rather than proof of a universal relationship.
-
-Detailed record: [`docs/production_analysis_status_2026-08-12.md`](docs/production_analysis_status_2026-08-12.md).
+Van Beeck and Wisconsin remain useful contextual/sensitivity cohorts but are **not part of the frozen four-study primary architecture evidence summarized here**.
 
 ---
 
-## Study 2 — Van Beeck et al. / PRJEB63336
+## Discovery analysis — Italy + Manitoba
 
-Study 2 is the independent replication/generalization cohort.
+The frozen primary healthy analysis contains **49 quarter trajectories from 14 cows**:
 
-### Longitudinal design
+- Italy: 20 trajectories / 5 cows
+- Manitoba: 29 trajectories / 9 cows
 
-The three milk timepoints are:
+Baseline family-level composition is represented using CLR-transformed community profiles with study-level centering before pooled PCA.
 
-- **Baseline:** dry-off, before intramammary treatment
-- **7 Days:** 7 days after dry-off/treatment
-- **55–75 DIM:** 55–75 days in milk in the subsequent lactation
+Primary model:
 
-This temporal structure is **not equivalent** to Study 1. In particular, Study 1 T2 is calving whereas Study 2 T2 is only 7 days after dry-off.
+`ecological_resistance ~ z_PC1 + z_PC2 + study`
 
-The source study selected a high-SCC quarter for microbiome sampling, but the currently reconstructed deposited metadata do not explicitly encode anatomical quarter identity across all three longitudinal samples. Exact same-quarter continuity will not be claimed until directly verified.
+Cow-clustered CR2 inference:
 
-### Metadata reconstruction
+- joint PC1 + PC2 HTZ F = **10.0**
+- df = **2, 7.81**
+- p = **0.00699**
+- PC1 beta = **-0.0286**, p = 0.124
+- PC2 beta = **+0.0622**, p = **0.00302**
+- descriptive R² = **0.334**
+- adjusted R² = **0.289**
 
-Recovered project inventory:
+Interpretation:
 
-- 530 sequencing runs
-- 514 unique BioSamples
-- 208 longitudinal core IDs
-- 114 complete 3-timepoint trajectories across sample types
-- 67 complete milk trajectories
-- 47 complete teat-skin trajectories
+> Baseline multivariate community architecture is associated with subsequent ecological resistance across the pooled Italy + Manitoba healthy-quarter analysis.
 
-The complete milk set contains 201 biological samples. Seven BioSamples had two technical sequencing runs; technical runs were collapsed before DADA2.
-
-### DADA2 and taxonomy
-
-Study 2 single-end Ion Torrent V4 production processing produced:
-
-- input reads: 8,584,765
-- non-chimeric reads: 4,068,186
-- final ASVs: 14,102
-- bacterial ASVs: 12,561
-- bacterial reads: 3,856,793
-- median bacterial depth: 16,255
-- genus-assigned ASVs: 8,980 / 14,102 (63.7%)
-
-SILVA 138.2 NR99 genus-level taxonomy was used.
-
-### Primary sequencing-depth decision
-
-Primary Study 2 analyses use **3,000 bacterial reads/sample**, retaining:
-
-- **60 of 67 complete trajectories (89.6%)**
-- **180 milk samples**
-
-Sensitivity thresholds are 2,000 and 4,000 reads/sample.
-
-At 3k:
-
-| Dairy | CB | CH | control high SCC | control low SCC | Total |
-|---|---:|---:|---:|---:|---:|
-| Dairy 1 | 5 | 3 | 2 | 4 | 14 |
-| Dairy 2 | 6 | 4 | 3 | 3 | 16 |
-| Dairy 3 | 8 | 8 | 7 | 7 | 30 |
-| **Total** | **19** | **15** | **12** | **14** | **60** |
-
-At 4k, 54 trajectories remain; at 5k, only 47 remain.
+The study-interaction test was not conventionally significant (`p = 0.0766`), supporting a shared multivariate phenomenon while allowing cohort heterogeneity.
 
 ---
 
-## Study 2 Q1 — displacement magnitude
+## External validation — Porcellato 16S cohort
 
-ASV-level mean Bray–Curtis displacement:
+Porcellato was independently reprocessed as a same-quarter longitudinal 16S cohort.
 
-- Baseline → 7 Days: **0.9013**
-- Baseline → 55–75 DIM: **0.9122**
-- 7 Days → 55–75 DIM: **0.9173**
+Trajectory-depth QC identified **189 complete Sampling1→Sampling2 trajectories**. The locked pre-model criterion of at least 1,000 DADA2 non-chimeric reads at both timepoints retained **154 trajectories**:
 
-Repeated mixed model:
+- Farm A: 93
+- Farm K: 61
 
-`displacement ~ interval + treatment + dairy + interval:treatment + (1|core)`
+The DADA2/taxonomy pipeline produced:
 
-Fixed-effect tests:
+- 378 samples
+- 15,567 ASVs
+- 213 bacterial families overall
+- 308 samples × 211 families in the locked 154-trajectory resistance matrix
+- 50 baseline families retained for PCA
 
-- interval: `P = 0.981`
-- treatment: `P = 0.782`
-- dairy: `P = 0.304`
-- interval × treatment: `P = 0.883`
+Baseline PCA variance explained:
 
-Thus large longitudinal ecological displacement occurred, but treatment did not explain the magnitude or temporal pattern of individual baseline-relative displacement after accounting for dairy.
+- PC1: **19.779%**
+- PC2: **8.823%**
 
----
+Primary model:
 
-## Study 2 Q3 — primary replication result
+`ecological_resistance ~ z_PC1 + z_PC2 + farm`
 
-The primary Q3 target preserves the Study 1 structure:
+with cow-clustered CR2 inference because cows can contribute multiple quarter trajectories.
 
-`mean baseline displacement = mean[D(Baseline,7 Days), D(Baseline,55–75 DIM)]`
+Primary result (`n = 154`):
 
-The same frozen baseline alpha-ecology predictors were used: richness, Shannon diversity, evenness, and dominance.
+- PC1 beta = **-0.0892**, p < 0.001
+- PC2 beta = **+0.0636**, p = **0.0106**
+- farm K beta = **+0.3061**, p < 0.001
+- joint PC1 + PC2 HTZ F = **9.49**
+- df = **2, 23.5**
+- p < **0.001**
+- descriptive R² = **0.410**
 
-### Primary ASV endpoint
+### Assigned-family-read robustness
 
-The **Study 1 directional rule did not replicate**.
+The result remained stable under stricter post-taxonomy depth requirements:
 
-Study 1:
+- ≥1,000 assigned family reads at both timepoints: `n = 143`, joint F = **11.9**, p < 0.001
+- ≥2,000 assigned family reads at both timepoints: `n = 121`, joint F = **7.87**, p = **0.00278**
 
-`+ richness, + Shannon, + evenness, - dominance`
+Porcellato therefore provides strong **independent phenomenon-level replication** of baseline ecological architecture predicting subsequent same-quarter ecological resistance.
 
-Study 2 ASV target:
-
-`- richness, - Shannon, - evenness, + dominance`
-
-For the primary ASV mean-displacement target, none of the four features survived within-outcome BH-FDR correction.
-
-Leave-one-dairy-out prediction also failed to show portable ASV-level alpha ecology:
-
-| Model | RMSE for mean displacement |
-|---|---:|
-| Null mean | **0.07009** |
-| Treatment | 0.07041 |
-| Alpha ecology | 0.07151 |
-| Ecology + treatment | 0.07283 |
-
-ASV CLR/PCA baseline-composition models likewise failed to beat the null across dairies.
-
-**Primary conclusion:** the strong universal-direction version of the Study 1 Q3 hypothesis is not replicated in Study 2 at the ASV-level endpoint.
+Because Porcellato's PCA is learned independently, this does **not** establish transport of identical discovery PC axes across cohorts.
 
 ---
 
-## Study 2 genus-level sensitivity analysis
+## External generalization — Patangia shotgun-metagenomic cohort
 
-Because ASV-level Bray was strongly compressed near the upper bound, a secondary taxonomic-resolution sensitivity analysis aggregated bacterial ASVs to genus/higher-taxonomy bins before calculating Bray displacement.
+Patangia contains **24 cows with complete M0, M2, M4, and M6 samples**. Family-level taxonomic profiles were derived from shotgun reads with Kraken2.
 
-Genus-level mean displacement was substantially lower:
+The validated family matrix contains:
 
-- Baseline → 7 Days: **0.6804**
-- Baseline → 55–75 DIM: **0.7297**
-- mean baseline displacement: **0.7051**
+- 96 samples
+- 852 families overall
+- finite relative-abundance profiles with row sums equal to 1
+- 680 M0 families retained after the ≥10% baseline-prevalence filter
 
-Yet ASV and genus displacement remained strongly correlated. For mean baseline displacement:
+M0 baseline PCA:
 
-- Pearson `r = 0.821`
-- Spearman `rho = 0.766`
+- PC1 variance explained: **8.958%**
+- PC2 variance explained: **6.580%**
 
-Thus ASV resolution amplified fine-scale turnover but tracked the same underlying ecological movement.
+### Prespecified M0→M2 result
 
-### Genus-level Q3 association
+Mean ecological resistance = **0.441**.
 
-At genus resolution, baseline ecology strongly associated with future displacement after dairy and treatment adjustment, **but in the opposite direction from Study 1**.
+- PC1 beta = **+0.0334**
+- PC2 beta = **-0.0252**
+- R² = **0.0275**
+- no significant joint baseline PC1 + PC2 association
 
-For genus mean baseline displacement:
+**Conclusion:** the primary Patangia taxonomic architecture test did not validate the discovery phenomenon at M0→M2.
 
-| Feature | Direction | BH q | Incremental R² |
-|---|---|---:|---:|
-| richness | negative | 0.03497 | 0.0693 |
-| Shannon | negative | 0.00651 | 0.1196 |
-| evenness | negative | 0.00101 | 0.1756 |
-| dominance | positive | 0.00101 | 0.1833 |
+### Additional intervals
 
-This supports the weaker statement that baseline ecological state relates to perturbability, but not a universal direction of susceptibility.
+M2→M4 and M4→M6 were also negative under standard and HC3 inference.
 
-### Genus-level transportability
+For exploratory M2→M6:
 
-High-dimensional genus CLR/PCA composition did not generalize across dairies.
+- mean ecological resistance = **0.503**
+- PC1 beta = +0.0430
+- PC2 beta = +0.0723
+- R² = 0.1448
+- standard joint F-test p = 0.194
+- HC3 PC2 p = 0.0618
+- HC3 asymptotic joint Wald p = 0.0231
 
-Simple baseline alpha ecology showed modest, inconsistent portability for genus mean displacement:
+Because the conventional joint test is null and only 24 independent cows are available, M2→M6 is treated as **suggestive/exploratory**, not confirmatory.
 
-- null RMSE: **0.14572**
-- alpha-ecology RMSE: **0.13881**
-- improvement versus null: **4.74%**
-- pooled CV `R²`: **0.009**
-
-This is not yet a strong predictive model.
-
----
-
-## Low-SCC untreated control sensitivity
-
-A targeted sensitivity analysis restricted Q3 to the **14 untreated low-SCC complete trajectories**:
-
-- Dairy 1: 4
-- Dairy 2: 3
-- Dairy 3: 7
-
-The reverse Study 2 direction persisted.
-
-For ASV mean displacement:
-
-- evenness: beta `-1.157`, `P = 0.033`, incremental `R² = 0.325`
-- dominance: beta `+0.967`, `P = 0.057`, incremental `R² = 0.272`
-
-For genus mean displacement, all four directions remained:
-
-`- richness, - Shannon, - evenness, + dominance`
-
-Therefore antibiotic exposure and high-SCC status alone are insufficient explanations for the Study 1 versus Study 2 Q3 difference.
+The current evidence does **not** justify claiming a 16S-versus-shotgun platform effect. Platform, sample size, biological window, host/background DNA, and cohort context remain confounded.
 
 ---
 
-## Current cross-study Q3 synthesis
+## Current synthesis
 
-The two studies now give different Q3 directional results despite both using dry-off pre-treatment milk as baseline.
+The evidence currently supports the following statement:
 
-### Strong universal hypothesis
+> **Baseline mammary microbial community architecture is associated with subsequent ecological resistance in the pooled Italy + Manitoba discovery analysis and independently generalizes in the Porcellato 16S cohort, whereas taxonomic baseline architecture does not robustly predict resistance in the smaller Patangia shotgun-metagenomic cohort.**
 
-`One universal baseline alpha-diversity rule predicts mammary perturbability with the same direction across cohorts.`
+The data do not establish:
 
-**Current result: not supported.**
+- a universal taxonomic PC axis;
+- universal effects of individual families;
+- a causal mechanism;
+- a sequencing-platform-specific effect;
+- guaranteed transportability across all biological windows.
 
-### Weaker ecological-susceptibility hypothesis
-
-`Baseline ecological state contains information about subsequent perturbability.`
-
-**Current result: supported within both studies, but the direction is cohort-dependent and Study 2 cross-dairy portability is weak.**
-
-The combined evidence therefore favors a refined model:
-
-`Perturbability = f(baseline ecological structure, community identity, perturbation regime, ecological background)`
-
-This refined formulation is a hypothesis to test, not a justification for unrestricted model searching within Study 2.
+This pattern is scientifically informative because MMER tests **generalization**, not whether every cohort can be made statistically positive.
 
 ---
 
-## Next hypothesis-driven question
+## Core aims
 
-A major mechanistic possibility is that **the organisms present at baseline differ fundamentally between Study 1 and Study 2**.
-
-Alpha diversity measures community shape, not organism identity. Similar richness/Shannon/evenness can describe biologically different taxonomic communities.
-
-The next cross-study question is therefore:
-
-> **Are the baseline mammary microbiomes in Study 1 and Study 2 compositionally different ecological regimes, and could that domain shift explain the opposite Q3 directional relationships?**
-
-The next analysis will compare baseline communities at a harmonized genus level using:
-
-1. shared versus study-specific genera;
-2. abundance-weighted shared-genus coverage;
-3. baseline genus-composition separation and effect size by study;
-4. dominant/core genus overlap;
-5. overlap of baseline alpha-ecology support;
-6. if justified, a shared-genus harmonized Q3 comparison.
-
-This is a mechanistic follow-up to the failed directional replication, not unrestricted taxa hunting.
-
-Detailed Study 2 record: [`docs/vanbeeck_study2_analysis_status_2026-08-14.md`](docs/vanbeeck_study2_analysis_status_2026-08-14.md).
+1. **Quantify mammary ecological resistance** at the longitudinal biological-unit level.
+2. **Determine whether baseline ecological architecture predicts subsequent resistance**, while separating the phenomenon from treatment/time-average effects.
+3. **Characterize the dimensions and generalizability of ecological resistance** across cohorts, biological contexts, and sequencing modalities.
 
 ---
 
-## Reproducibility principles
+## Key documents
 
-- Preserve ENA accessions and original aliases.
-- Treat repeated samples from the same cow/core ID as longitudinally linked observations.
-- Separate ecological resistance from antimicrobial resistance terminology.
-- Treat treatment and anatomical quarter as confounded in Study 1.
-- Treat Study 1 Q3 as discovery/hypothesis-generating because Study 1 contains only five cows.
-- Never evaluate repeated-quarter models with quarter-level random train/test splitting; hold out cows as blocks.
-- Learn treatment effects inside training folds when treatment is used predictively.
-- For Study 2, explicitly evaluate dairy/background transportability.
-- Do not claim exact same-quarter continuity in Study 2 until anatomical-quarter tracking is directly verified.
-- Preserve the primary ASV-level replication endpoint; genus analyses remain taxonomic-resolution sensitivities.
-- Do not promote secondary results to primary because they are statistically stronger.
-- Do not escalate model complexity solely to improve performance on the same replication cohort.
-- Do not reinterpret ecological perturbability as disease risk without a separate disease-outcome test.
+- [`docs/four_study_ecological_resistance_freeze_2026-08-16.md`](docs/four_study_ecological_resistance_freeze_2026-08-16.md) — current four-study evidence freeze
+- [`docs/external_generalization_status_2026-08-16.md`](docs/external_generalization_status_2026-08-16.md) — detailed Porcellato and Patangia external analyses
+- [`docs/frozen_primary_healthy_two_aims_2026-08-16.md`](docs/frozen_primary_healthy_two_aims_2026-08-16.md) — frozen Italy + Manitoba primary healthy analysis
+- [`docs/MMER_source_papers_critical_comparison.md`](docs/MMER_source_papers_critical_comparison.md) — conceptual distinction from the Italy and Manitoba source studies
+
+---
+
+## Reproducibility guardrails
+
+- Preserve the Italy + Manitoba healthy-quarter analysis as the discovery/development framework.
+- Preserve Porcellato `n = 154` as the primary external 16S analysis; `n = 143` and `n = 121` are depth robustness checks.
+- Preserve Patangia M0→M2 as the primary shotgun taxonomic test.
+- Keep Patangia M2→M6 explicitly exploratory.
+- Use cow-clustered inference when cows contribute multiple quarter trajectories.
+- Do not use cow-clustered CR2 when an endpoint-specific analysis has one independent observation per cow; use ordinary or heteroskedasticity-robust inference as appropriate.
+- Do not infer a 16S-versus-shotgun effect from one shotgun cohort.
+- Do not reinterpret taxonomic families defining PCA axes as individually causal biomarkers.
+- Exact cross-cohort axis transport requires harmonized features and projection of frozen discovery loadings; independent PCA supports phenomenon-level replication only.
+- Do not promote secondary time windows or sensitivity analyses to primary because they produce smaller p-values.
 
 ## Status
 
-**Study 1:** discovery-complete for Q1–Q3.
+**Italy + Manitoba discovery analysis:** complete and frozen.
 
-**Study 2 metadata and sequence processing:** complete for the primary milk cohort.
+**Porcellato external 16S validation:** complete; strong positive replication.
 
-**Study 2 Q1:** complete at the primary 3k ASV endpoint.
+**Patangia shotgun taxonomic external test:** complete; primary null with limited exploratory later-window evidence.
 
-**Study 2 primary Q3 replication:** complete; universal Study 1 direction not replicated.
-
-**Study 2 genus-level sensitivity:** complete; strong ecological association with opposite direction and modest cross-dairy portability.
-
-**Low-SCC untreated sensitivity:** complete; Study 2 reverse direction persists.
-
-**Next:** harmonized Study 1 versus Study 2 baseline genus-community comparison to test whether baseline taxonomic regime/domain shift can explain heterogeneous Q3 behavior.
+**Current priority:** consolidate the four-study result into publication-ready Aim 1–3 results, figures, and interpretation without changing the frozen primary hypotheses.
