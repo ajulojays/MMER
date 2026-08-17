@@ -134,9 +134,42 @@ Current evidence supports the following cautious statement:
 
 The current evidence does not establish a universal taxonomic axis, a universal direction for individual taxa, a causal mechanism, or a sequencing-platform-specific effect.
 
-## 5. Next cohort
+## 5. Recovered original five-study inventory
 
-Van Beeck / PRJEB63336 is already processed locally with 60 complete 3k trajectories and family/genus-level outputs. It will be revisited next using the current baseline-architecture -> ecological-resistance hypothesis, without promoting prior secondary analyses to primary status after seeing results.
+The original MMER screening/processing set is now recovered from the project directory structure as:
+
+1. **Study 1 — Italy / Biscarini et al. / PRJEB38332**
+2. **Study 2 — Van Beeck et al. / PRJEB63336**
+3. **Study 3 — Manitoba**
+4. **Study 4 — Porcellato**
+5. **Study 5 — Wisconsin / PRJNA478482**
+
+Patangia was added later as **Study 6**, and the clean Porcellato reprocessing used for current external generalization was added later as **Study 7**. Study 7 is therefore not a new biological cohort; it is a fresh reprocessing of the original Study 4 Porcellato dataset for the current hypothesis.
+
+## 6. Van Beeck is the next already-processed cohort to revisit
+
+Van Beeck / PRJEB63336 is already extensively processed locally and does not require a new download before hypothesis testing.
+
+Recovered analysis assets include:
+
+- `results/vanbeeck/analysis_3k/metadata_60_complete_trajectories.csv`
+- `results/vanbeeck/analysis_3k/seqtab_bacterial_rarefied_3000.rds`
+- `results/vanbeeck/Q1_3k/study2_60trajectory_bray_displacement.csv`
+- `results/vanbeeck/Q3_3k/study2_60trajectory_Q3_training_table.csv`
+- `results/vanbeeck/genus_3k/study2_60trajectory_genus_bray_displacement.csv`
+- `results/vanbeeck/genus_3k/study2_baseline_genus_counts_3k.csv`
+- `results/vanbeeck/family_q3/study2_family_q3_trajectory_table.csv`
+- family/genus taxonomy and retained-trajectory metadata under `results/vanbeeck/taxonomy/`
+
+The current Van Beeck 3k set contains **60 complete longitudinal milk trajectories**. The next analysis should test the same current hypothesis:
+
+`baseline family-level CLR/PCA architecture -> subsequent ecological resistance`
+
+using the existing processed data and preserving dairy/treatment structure where required. Prior Q3 alpha-diversity or genus analyses should not be promoted to the new primary architecture test after seeing their results.
+
+## 7. Wisconsin status
+
+Wisconsin remains available as an additional contextual/generalization cohort and is already heavily processed locally. It was excluded from the frozen primary healthy analysis because individual healthy-quarter mapping could not be recovered confidently enough for that specific primary design. It should only be reintroduced under a clearly stated external/generalization analysis plan that does not overclaim healthy same-quarter status.
 
 ## Reproducibility / inference guardrails
 
@@ -146,3 +179,5 @@ Van Beeck / PRJEB63336 is already processed locally with 60 complete 3k trajecto
 - Do not infer a 16S-vs-shotgun platform effect from one shotgun cohort.
 - Do not search additional time windows or taxa solely because a predefined test was null.
 - Independent cohort PCA tests phenomenon-level generalization; exact axis transportability requires projecting frozen discovery loadings into a harmonized external feature space.
+- Treat Study 7 Porcellato as a reprocessing of original Study 4, not as an additional independent biological cohort.
+- Revisit Van Beeck next because its 60 complete trajectories and processed family/genus outputs are already available.
