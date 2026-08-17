@@ -21,7 +21,6 @@ analysis <- read_csv(file.path(IN, "vanbeeck_external_validation_analysis_table.
     treatment = factor(treatment, levels = c("control low SCC", "control high SCC", "CB", "CH"))
   )
 primary <- read_csv(file.path(IN, "PRIMARY_external_validation_joint_PC1_PC2.csv"), show_col_types = FALSE)
-coefs <- read_csv(file.path(IN, "PRIMARY_HC3_coefficients.csv"), show_col_types = FALSE)
 boot <- read_csv(file.path(IN, "BOOTSTRAP_5000_replicates.csv"), show_col_types = FALSE)
 boot_summary <- read_csv(file.path(IN, "BOOTSTRAP_5000_summary.csv"), show_col_types = FALSE)
 pca_scores <- read_csv(file.path(IN, "vanbeeck_baseline_PCA_scores.csv"), show_col_types = FALSE)
@@ -31,7 +30,7 @@ stopifnot(nrow(analysis) == 60, nrow(primary) == 1)
 
 save_plot <- function(p, stem, width = 7.2, height = 5.2) {
   ggsave(file.path(OUT, paste0(stem, ".png")), p, width = width, height = height, dpi = 600)
-  ggsave(file.path(OUT, paste0(stem, ".pdf")), p, width = width, height = height, device = cairo_pdf)
+  ggsave(file.path(OUT, paste0(stem, ".pdf")), p, width = width, height = height)
 }
 
 base_theme <- theme_classic(base_size = 12) +
@@ -42,7 +41,7 @@ base_theme <- theme_classic(base_size = 12) +
     legend.title = element_text(face = "bold")
   )
 
-# Figure VB1. Distribution of the frozen primary phenotype
+# Figure VB1. Distribution of the frozen primary phenotype.
 p1 <- ggplot(analysis, aes(x = overall_resistance)) +
   geom_histogram(bins = 12, boundary = 0, closed = "left") +
   geom_vline(xintercept = mean(analysis$overall_resistance), linetype = 2) +
@@ -56,7 +55,7 @@ p1 <- ggplot(analysis, aes(x = overall_resistance)) +
   base_theme
 save_plot(p1, "Fig_VB1_overall_resistance_distribution", 7.2, 4.8)
 
-# Figures VB2A/B. Added-variable plots for the two frozen baseline axes
+# Figures VB2A/B. Added-variable visualizations of the frozen model coefficients.
 make_added_variable <- function(pc, other_pc, label) {
   y_formula <- as.formula(paste("overall_resistance ~", other_pc, "+ treatment + dairy"))
   x_formula <- as.formula(paste(pc, "~", other_pc, "+ treatment + dairy"))
@@ -65,6 +64,7 @@ make_added_variable <- function(pc, other_pc, label) {
       outcome_residual = resid(lm(y_formula, data = analysis)),
       pc_residual = resid(lm(x_formula, data = analysis))
     )
+
   ggplot(z, aes(x = pc_residual, y = outcome_residual)) +
     geom_hline(yintercept = 0, linewidth = 0.3) +
     geom_vline(xintercept = 0, linewidth = 0.3) +
@@ -85,7 +85,7 @@ p2b <- make_added_variable("z_PC2", "z_PC1", "PC2")
 save_plot(p2a, "Fig_VB2A_PC1_added_variable", 7.2, 5.2)
 save_plot(p2b, "Fig_VB2B_PC2_added_variable", 7.2, 5.2)
 
-# Figure VB3. Bootstrap coefficient intervals
+# Figure VB3. Bootstrap coefficient intervals.
 forest <- boot_summary %>%
   filter(statistic %in% c("beta_PC1", "beta_PC2")) %>%
   mutate(
@@ -95,7 +95,11 @@ forest <- boot_summary %>%
 
 p3 <- ggplot(forest, aes(y = axis, x = original)) +
   geom_vline(xintercept = 0, linewidth = 0.4) +
-  geom_errorbarh(aes(xmin = CI_2.5, xmax = CI_97.5), height = 0.15) +
+  geom_errorbar(
+    aes(xmin = CI_2.5, xmax = CI_97.5),
+    orientation = "y",
+    width = 0.15
+  ) +
   geom_point(size = 2.5) +
   labs(
     title = "Bootstrap stability of Van Beeck baseline-architecture coefficients",
@@ -107,7 +111,7 @@ p3 <- ggplot(forest, aes(y = axis, x = original)) +
   base_theme
 save_plot(p3, "Fig_VB3_bootstrap_PC_coefficients", 7.2, 4.2)
 
-# Figure VB4. Bootstrap distribution of joint architecture effect size
+# Figure VB4. Bootstrap distribution of the joint architecture effect size.
 observed_pr2 <- primary$partial_R2_PC1_PC2[[1]]
 p4 <- ggplot(boot, aes(x = partial_R2_PC1_PC2)) +
   geom_histogram(bins = 35) +
@@ -122,7 +126,7 @@ p4 <- ggplot(boot, aes(x = partial_R2_PC1_PC2)) +
   base_theme
 save_plot(p4, "Fig_VB4_bootstrap_partial_R2", 7.2, 4.8)
 
-# Figure VB5. Concordance of the three joint hypothesis tests
+# Figure VB5. Concordance of the three joint hypothesis tests.
 inference <- tibble(
   method = c("Classical partial F", "HC3 joint Wald", "Freedman–Lane permutation"),
   p = c(primary$classical_p[[1]], primary$HC3_joint_p[[1]], primary$permutation_p[[1]])
@@ -142,12 +146,12 @@ p5 <- ggplot(inference, aes(x = minus_log10_p, y = method)) +
     title = "Concordant support for the joint PC1 + PC2 validation test",
     x = expression(-log[10](italic(p))),
     y = NULL,
-    caption = "Dashed line marks p = 0.05. The permutation test is the most design-aware small-sample robustness check."
+    caption = "Dashed line marks p = 0.05. The permutation test preserves the dairy × treatment design strata."
   ) +
   base_theme
 save_plot(p5, "Fig_VB5_joint_test_concordance", 7.2, 4.5)
 
-# Figure VB6. Baseline PC space, shown only as ordination/QC context
+# Figure VB6. Baseline PC space, shown only as ordination/QC context.
 pc1_pct <- 100 * pca_var$variance_explained[pca_var$component == "PC1"][[1]]
 pc2_pct <- 100 * pca_var$variance_explained[pca_var$component == "PC2"][[1]]
 p6 <- ggplot(pca_scores, aes(x = PC1, y = PC2, shape = dairy)) +
